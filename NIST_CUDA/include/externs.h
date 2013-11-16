@@ -1,5 +1,5 @@
 #include "defs.h"
-#include <stdio.h> // добавила, чтобы FILE определился
+#include <stdio.h> // РґРѕР±Р°РІРёР»Р°, С‡С‚РѕР±С‹ FILE РѕРїСЂРµРґРµР»РёР»СЃСЏ
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                    G L O B A L   D A T A  S T R U C T U R E S 

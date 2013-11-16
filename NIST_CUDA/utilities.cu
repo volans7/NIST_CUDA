@@ -11,8 +11,8 @@ U T I L I T I E S
 #include "include\stat_fncs.h"
 
 #include <iostream>
-using std::cout; // мое
-using std::cin; // мое
+using std::cout; // РјРѕРµ
+using std::cin; // РјРѕРµ
 
 int
 displayGeneratorOptions()
@@ -51,7 +51,7 @@ generatorOptions(char** streamFile)
 				printf("\n");
 				if ( (fp = fopen(*streamFile, "r")) == NULL ) {
 					printf("File Error:  file %s could not be opened.\n",  *streamFile);	
-					cout << "\nPress any key...\n"; // мое
+					cout << "\nPress any key...\n"; // РјРѕРµ
 					getchar();
 					exit(-1);
 				}
@@ -125,7 +125,7 @@ chooseTests()
 	printf("            Enter 0 if you DO NOT want to apply all of the\n");
 	printf("            statistical tests to each sequence and 1 if you DO.\n\n");
 	printf("   Enter Choice: ");
-	scanf("%d", &testVector[0]); // не понятно, зачем нужен тествектор
+	scanf("%d", &testVector[0]); // РЅРµ РїРѕРЅСЏС‚РЅРѕ, Р·Р°С‡РµРј РЅСѓР¶РµРЅ С‚РµСЃС‚РІРµРєС‚РѕСЂ
 	//printf("test vector = %d", &testVector);
 	printf("\n");
 	if ( testVector[0] == 1 )
@@ -157,7 +157,7 @@ fixParameters()
 		
 	do {
 		counter = 1;
-		printf("        P a r a m e t e r   A d j u s t m e n t s \n"); // показывает итоговые параметры
+		printf("        P a r a m e t e r   A d j u s t m e n t s \n"); // РїРѕРєР°Р·С‹РІР°РµС‚ РёС‚РѕРіРѕРІС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
 		printf("        -----------------------------------------\n");
 		if ( testVector[TEST_BLOCK_FREQUENCY] == 1 )
 			printf("    [%d] Block Frequency Test - block length(M):         %d\n", counter++, tp.blockFrequencyBlockLength);
@@ -240,9 +240,9 @@ openOutputStreams(int option)
 	int		i, numOfBitStreams, numOfOpenFiles = 0;
 	char	freqfn[200], summaryfn[200], statsDir[200], resultsDir[200];
 	
-	// Функция sprintf() идентична функции printf() за исключением того, что поток вывода записывается в массив, 
-	//адресуемый указателем buf, а не в стандартный поток stdout. По окончании работы функции этот массив будет завершаться символом конца строки (нуль-символом). 
-	// создаем файл
+	// Р¤СѓРЅРєС†РёСЏ sprintf() РёРґРµРЅС‚РёС‡РЅР° С„СѓРЅРєС†РёРё printf() Р·Р° РёСЃРєР»СЋС‡РµРЅРёРµРј С‚РѕРіРѕ, С‡С‚Рѕ РїРѕС‚РѕРє РІС‹РІРѕРґР° Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РјР°СЃСЃРёРІ, 
+	//Р°РґСЂРµСЃСѓРµРјС‹Р№ СѓРєР°Р·Р°С‚РµР»РµРј buf, Р° РЅРµ РІ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє stdout. РџРѕ РѕРєРѕРЅС‡Р°РЅРёРё СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё СЌС‚РѕС‚ РјР°СЃСЃРёРІ Р±СѓРґРµС‚ Р·Р°РІРµСЂС€Р°С‚СЊСЃСЏ СЃРёРјРІРѕР»РѕРј РєРѕРЅС†Р° СЃС‚СЂРѕРєРё (РЅСѓР»СЊ-СЃРёРјРІРѕР»РѕРј). 
+	// СЃРѕР·РґР°РµРј С„Р°Р№Р»
 	sprintf(freqfn, "experiments/%s/freq.txt", generatorDir[option]); 
 	printf("file: <%s>", freqfn);
 
@@ -251,14 +251,14 @@ openOutputStreams(int option)
 		exit(-1);
 	}
 
-	// создаем файл
+	// СЃРѕР·РґР°РµРј С„Р°Р№Р»
 	sprintf(summaryfn, "experiments/%s/finalAnalysisReport.txt", generatorDir[option]); 
 	if ( (summary = fopen(summaryfn, "w")) == NULL ) {
 		printf("\t\tMAIN:  Could not open stats file: <%s>", summaryfn);
 		exit(-1);
 	}
 
-	// создаем файлы в папках каждого теста
+	// СЃРѕР·РґР°РµРј С„Р°Р№Р»С‹ РІ РїР°РїРєР°С… РєР°Р¶РґРѕРіРѕ С‚РµСЃС‚Р°
 	for( i=1; i<=NUMOFTESTS; i++ ) {
 		if ( testVector[i] == 1 ) {
 			sprintf(statsDir, "experiments/%s/%s/stats.txt", generatorDir[option], testNames[i]);
@@ -407,63 +407,63 @@ void
 nist_test_suite()
 {
 	if ( (testVector[0] == 1) || (testVector[TEST_FREQUENCY] == 1) ) {
-		printf("Выполняем тест: 1) Частотный тест\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 1) Р§Р°СЃС‚РѕС‚РЅС‹Р№ С‚РµСЃС‚\n");
 		Frequency(tp.n);
 	}
 	if ( (testVector[0] == 1) || (testVector[TEST_BLOCK_FREQUENCY] == 1) ) 
-		printf("Выполняем тест: 2) Частотный тест в подпоследовательностях\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 2) Р§Р°СЃС‚РѕС‚РЅС‹Р№ С‚РµСЃС‚ РІ РїРѕРґРїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЏС…\n");
 		//BlockFrequency(tp.blockFrequencyBlockLength, tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_CUSUM] == 1) )
-		printf("Выполняем тест: 3) Проверка кумулятивных сумм\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 3) РџСЂРѕРІРµСЂРєР° РєСѓРјСѓР»СЏС‚РёРІРЅС‹С… СЃСѓРјРј\n");
 		//CumulativeSums(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_RUNS] == 1) )
-		printf("Выполняем тест: 4) Проверка на равномертность\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 4) РџСЂРѕРІРµСЂРєР° РЅР° СЂР°РІРЅРѕРјРµСЂС‚РЅРѕСЃС‚СЊ\n");
 		//Runs(tp.n); 
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_LONGEST_RUN] == 1) )
-		printf("Выполняем тест: 5) Проверка на равномертность в подпоследовательности\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 5) РџСЂРѕРІРµСЂРєР° РЅР° СЂР°РІРЅРѕРјРµСЂС‚РЅРѕСЃС‚СЊ РІ РїРѕРґРїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё\n");
 		//LongestRunOfOnes(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_RANK] == 1) )
-		printf("Выполняем тест: 6) Проверка рангов матриц\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 6) РџСЂРѕРІРµСЂРєР° СЂР°РЅРіРѕРІ РјР°С‚СЂРёС†\n");
 		//Rank(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_FFT] == 1) )
-		printf("Выполняем тест: 7) Спектральный тест\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 7) РЎРїРµРєС‚СЂР°Р»СЊРЅС‹Р№ С‚РµСЃС‚\n");
 		//DiscreteFourierTransform(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_NONPERIODIC] == 1) )
-		printf("Выполняем тест: 8) Проверка непересекающихся шаблонов\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 8) РџСЂРѕРІРµСЂРєР° РЅРµРїРµСЂРµСЃРµРєР°СЋС‰РёС…СЃСЏ С€Р°Р±Р»РѕРЅРѕРІ\n");
 		//NonOverlappingTemplateMatchings(tp.nonOverlappingTemplateBlockLength, tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_OVERLAPPING] == 1) )
-		printf("Выполняем тест: 9) Проверка пересекающихся шаблонов\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 9) РџСЂРѕРІРµСЂРєР° РїРµСЂРµСЃРµРєР°СЋС‰РёС…СЃСЏ С€Р°Р±Р»РѕРЅРѕРІ\n");
 		//OverlappingTemplateMatchings(tp.overlappingTemplateBlockLength, tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_UNIVERSAL] == 1) )
-		printf("Выполняем тест: 10) Универсальный статистический тест Маурера \n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 10) РЈРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ СЃС‚Р°С‚РёСЃС‚РёС‡РµСЃРєРёР№ С‚РµСЃС‚ РњР°СѓСЂРµСЂР° \n");
 		//Universal(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_APEN] == 1) )
-		printf("Выполняем тест: 11) Проверка аппроксимированной энтропии\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 11) РџСЂРѕРІРµСЂРєР° Р°РїРїСЂРѕРєСЃРёРјРёСЂРѕРІР°РЅРЅРѕР№ СЌРЅС‚СЂРѕРїРёРё\n");
 		//ApproximateEntropy(tp.approximateEntropyBlockLength, tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_RND_EXCURSION] == 1) )
-		printf("Выполняем тест: 12) Проверка случайных отклонений\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 12) РџСЂРѕРІРµСЂРєР° СЃР»СѓС‡Р°Р№РЅС‹С… РѕС‚РєР»РѕРЅРµРЅРёР№\n");
 		//RandomExcursions(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_RND_EXCURSION_VAR] == 1) )
-		printf("Выполняем тест: 13) Разновидность проверки случайных отклонений\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 13) Р Р°Р·РЅРѕРІРёРґРЅРѕСЃС‚СЊ РїСЂРѕРІРµСЂРєРё СЃР»СѓС‡Р°Р№РЅС‹С… РѕС‚РєР»РѕРЅРµРЅРёР№\n");
 		//RandomExcursionsVariant(tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_SERIAL] == 1) )
-		printf("Выполняем тест: 14) Проверка серий\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 14) РџСЂРѕРІРµСЂРєР° СЃРµСЂРёР№\n");
 		//Serial(tp.serialBlockLength,tp.n);
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_LINEARCOMPLEXITY] == 1) )
-		printf("Выполняем тест: 15) Проверка линейной сложности\n");
+		printf("Р’С‹РїРѕР»РЅСЏРµРј С‚РµСЃС‚: 15) РџСЂРѕРІРµСЂРєР° Р»РёРЅРµР№РЅРѕР№ СЃР»РѕР¶РЅРѕСЃС‚Рё\n");
 		//LinearComplexity(tp.linearComplexitySequenceLength, tp.n);
 }
 

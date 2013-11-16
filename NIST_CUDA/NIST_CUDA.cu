@@ -22,12 +22,12 @@ using namespace std;
 
 __global__ void add2( int *a, int *b, int *c)
 {
-	int tid = blockIdx.x; // это CPU 0
+	int tid = blockIdx.x; // СЌС‚Рѕ CPU 0
 	if (tid < N)
 		c[tid] = a[tid] + b[tid];
 }
 
-__global__ void add(int a, int b, int *c) // ключевое слово, означающее, что функция должа испольняться на GPU
+__global__ void add(int a, int b, int *c) // РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ, РѕР·РЅР°С‡Р°СЋС‰РµРµ, С‡С‚Рѕ С„СѓРЅРєС†РёСЏ РґРѕР»Р¶Р° РёСЃРїРѕР»СЊРЅСЏС‚СЊСЃСЏ РЅР° GPU
 { 
     *c=a + b;
 } 
@@ -37,44 +37,44 @@ int DeviceInfo(void)
 	int count;
 	cudaDeviceProp prop;
 	
-	//Информация об устройстве
+	//РРЅС„РѕСЂРјР°С†РёСЏ РѕР± СѓСЃС‚СЂРѕР№СЃС‚РІРµ
 	cudaGetDeviceCount( &count );
 	for (int i = 0; i < count; i++)
 	{
 		cudaGetDeviceProperties (&prop, i);
-		printf("--- Общая информация об устройстве %d ---\n", i);
-		printf("Имя: %s\n", prop.name);
-		printf("Вычислительные возможности: %d.%d\n", prop.major, prop.minor);
-		printf("Тактовая частота: %d\n", prop.clockRate);
-		printf("Перекрытие копирования: ");
+		printf("--- РћР±С‰Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ РѕР± СѓСЃС‚СЂРѕР№СЃС‚РІРµ %d ---\n", i);
+		printf("РРјСЏ: %s\n", prop.name);
+		printf("Р’С‹С‡РёСЃР»РёС‚РµР»СЊРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё: %d.%d\n", prop.major, prop.minor);
+		printf("РўР°РєС‚РѕРІР°СЏ С‡Р°СЃС‚РѕС‚Р°: %d\n", prop.clockRate);
+		printf("РџРµСЂРµРєСЂС‹С‚РёРµ РєРѕРїРёСЂРѕРІР°РЅРёСЏ: ");
 		if (prop.deviceOverlap)
-			printf("Разрешено\n");
+			printf("Р Р°Р·СЂРµС€РµРЅРѕ\n");
 		else
-			printf("Запрещено\n");
-		printf("Тайм-аут выполнения ядра: ");
+			printf("Р—Р°РїСЂРµС‰РµРЅРѕ\n");
+		printf("РўР°Р№Рј-Р°СѓС‚ РІС‹РїРѕР»РЅРµРЅРёСЏ СЏРґСЂР°: ");
 		if (prop.kernelExecTimeoutEnabled)
-			printf("Включен\n");
+			printf("Р’РєР»СЋС‡РµРЅ\n");
 		else
-			printf("Выключен\n");
+			printf("Р’С‹РєР»СЋС‡РµРЅ\n");
 
-		printf("--- Информация о памяти для устройства %d ---\n", i);
-		printf("Всего глобальной памяти: %lld\n", prop.totalGlobalMem);
-		printf("Всего константной памяти: %ld\n", prop.totalConstMem);
-		printf("Максимальный шаг: %ld\n", prop.memPitch);
-		printf("Выравнивание текстур: %ld\n", prop.textureAlignment);
+		printf("--- РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїР°РјСЏС‚Рё РґР»СЏ СѓСЃС‚СЂРѕР№СЃС‚РІР° %d ---\n", i);
+		printf("Р’СЃРµРіРѕ РіР»РѕР±Р°Р»СЊРЅРѕР№ РїР°РјСЏС‚Рё: %lld\n", prop.totalGlobalMem);
+		printf("Р’СЃРµРіРѕ РєРѕРЅСЃС‚Р°РЅС‚РЅРѕР№ РїР°РјСЏС‚Рё: %ld\n", prop.totalConstMem);
+		printf("РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ С€Р°Рі: %ld\n", prop.memPitch);
+		printf("Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ С‚РµРєСЃС‚СѓСЂ: %ld\n", prop.textureAlignment);
 		
-		printf("--- Информация о мультипроцессорах для устройства %d ---\n", i);
-		printf("Количество мультипроцессоров: %d\n", prop.multiProcessorCount);
-		printf("Разделяемая память на один МП: %ld\n", prop.sharedMemPerBlock);
-		printf("Регистров на один МП: %d\n", prop.regsPerBlock);
-		printf("Нитей в варпе: %d\n", prop.warpSize);
-		printf("Макс. количество нитей в блоке: %d\n", prop.maxThreadsPerBlock);
-		printf("Макс. количество нитей по измерениям: (%d, %d, %d)\n", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
-		printf("Максимальные размеры сетки: (%d, %d, %d)\n", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
+		printf("--- РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РјСѓР»СЊС‚РёРїСЂРѕС†РµСЃСЃРѕСЂР°С… РґР»СЏ СѓСЃС‚СЂРѕР№СЃС‚РІР° %d ---\n", i);
+		printf("РљРѕР»РёС‡РµСЃС‚РІРѕ РјСѓР»СЊС‚РёРїСЂРѕС†РµСЃСЃРѕСЂРѕРІ: %d\n", prop.multiProcessorCount);
+		printf("Р Р°Р·РґРµР»СЏРµРјР°СЏ РїР°РјСЏС‚СЊ РЅР° РѕРґРёРЅ РњРџ: %ld\n", prop.sharedMemPerBlock);
+		printf("Р РµРіРёСЃС‚СЂРѕРІ РЅР° РѕРґРёРЅ РњРџ: %d\n", prop.regsPerBlock);
+		printf("РќРёС‚РµР№ РІ РІР°СЂРїРµ: %d\n", prop.warpSize);
+		printf("РњР°РєСЃ. РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ: %d\n", prop.maxThreadsPerBlock);
+		printf("РњР°РєСЃ. РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРёС‚РµР№ РїРѕ РёР·РјРµСЂРµРЅРёСЏРј: (%d, %d, %d)\n", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
+		printf("РњР°РєСЃРёРјР°Р»СЊРЅС‹Рµ СЂР°Р·РјРµСЂС‹ СЃРµС‚РєРё: (%d, %d, %d)\n", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
 		size_t free = 0;
 		size_t total = 0;
 		cudaMemGetInfo (&free, &total);
-		printf("Количество свободной памяти: %lld, всего %lld\n", free, total); 
+		printf("РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРІРѕР±РѕРґРЅРѕР№ РїР°РјСЏС‚Рё: %lld, РІСЃРµРіРѕ %lld\n", free, total); 
 		printf("\n");	
 	}
 	return 0;
@@ -84,7 +84,7 @@ int DeviceInfo(void)
 // Main entry into the program 
 int main(void) 
 { 
-	setlocale (LC_ALL, ".1251"); // для вывода;
+	setlocale (LC_ALL, ".1251"); // РґР»СЏ РІС‹РІРѕРґР°;
 
 	int		i;
 	int		option;			/* TEMPLATE LENGTH/STREAM LENGTH/GENERATOR*/
@@ -92,7 +92,7 @@ int main(void)
 
 	DeviceInfo();
 
-	// Определяем параметры теста (структура определена в defs.h)
+	// РћРїСЂРµРґРµР»СЏРµРј РїР°СЂР°РјРµС‚СЂС‹ С‚РµСЃС‚Р° (СЃС‚СЂСѓРєС‚СѓСЂР° РѕРїСЂРµРґРµР»РµРЅР° РІ defs.h)
 	tp.n = 100; //60000000 int shared memory max. 
 	tp.blockFrequencyBlockLength = 128;
 	tp.nonOverlappingTemplateBlockLength = 9;
@@ -102,9 +102,9 @@ int main(void)
 	tp.linearComplexitySequenceLength = 500;
 	tp.numOfBitStreams = 1;
 
-	option = generatorOptions(&streamFile); // показываем генераторы
-	chooseTests(); // выбираем тесты - все или по одному (?)
-	fixParameters(); // пользователь может изменить дефолтные параметры
+	option = generatorOptions(&streamFile); // РїРѕРєР°Р·С‹РІР°РµРј РіРµРЅРµСЂР°С‚РѕСЂС‹
+	chooseTests(); // РІС‹Р±РёСЂР°РµРј С‚РµСЃС‚С‹ - РІСЃРµ РёР»Рё РїРѕ РѕРґРЅРѕРјСѓ (?)
+	fixParameters(); // РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ РёР·РјРµРЅРёС‚СЊ РґРµС„РѕР»С‚РЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
 	openOutputStreams(option);
 	invokeTestSuite(option, streamFile);
 
@@ -392,7 +392,7 @@ computeMetrics(char *s, int test)
 	
 	// Compute Metric 2: Histogram 
 	
-	//qsort((void *)A, sampleSize, sizeof(double), (void *)cmp); --------------------------------------------------------------------------------- ПОЧИНИТЬ!
+	//qsort((void *)A, sampleSize, sizeof(double), (void *)cmp); --------------------------------------------------------------------------------- РџРћР§РРќРРўР¬!
 
 	for ( j=0; j<sampleSize; j++ ) {
 		pos = (int)floor(A[j]*10);

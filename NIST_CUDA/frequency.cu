@@ -7,20 +7,20 @@
 #include <cuda_runtime.h> 
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-#include <device_launch_parameters.h> // для threadIdx
-#include <device_functions.h> // для __syncthreads()
+#include <device_launch_parameters.h> // РґР»СЏ threadIdx
+#include <device_functions.h> // РґР»СЏ __syncthreads()
 
 #include <ctime>
 #include <time.h>
 #include <Windows.h>
 
-#pragma comment(lib, "cudart") // динамическая бибилиотека для CUDA runtime API (высокоуровневый)
+#pragma comment(lib, "cudart") // РґРёРЅР°РјРёС‡РµСЃРєР°СЏ Р±РёР±РёР»РёРѕС‚РµРєР° РґР»СЏ CUDA runtime API (РІС‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІС‹Р№)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                           F R E Q U E N C Y  T E S T
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define BLOCK_SIZE 1024 // это максимально возможное число нитей в блоке. 128, 256, 512, 1024
+#define BLOCK_SIZE 1024 // СЌС‚Рѕ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РІРѕР·РјРѕР¶РЅРѕРµ С‡РёСЃР»Рѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ. 128, 256, 512, 1024
 
 __global__ void reduce (int nn, int * inData, int * outData)
 {
@@ -30,7 +30,7 @@ __global__ void reduce (int nn, int * inData, int * outData)
 
 	int i = 2 * blockIdx.x * blockDim.x + threadIdx.x;
 
-	if (i + blockDim.x < nn) // проверка нужна, т.к. не все входные последовательности кратны 1024
+	if (i + blockDim.x < nn) // РїСЂРѕРІРµСЂРєР° РЅСѓР¶РЅР°, С‚.Рє. РЅРµ РІСЃРµ РІС…РѕРґРЅС‹Рµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё РєСЂР°С‚РЅС‹ 1024
 		data[tid] = inData[i] + inData[i + blockDim.x];
 	else
 		data[tid] = inData[i];
@@ -39,12 +39,12 @@ __global__ void reduce (int nn, int * inData, int * outData)
 	for (int s = blockDim.x / 2; s > 32; s = s / 2 )
 	{
 		if (tid < s)
-			if (i + s < nn) // проверка нужна, т.к. не все входные последовательности кратны 1024. чтобы не суммировалось лишнее
+			if (i + s < nn) // РїСЂРѕРІРµСЂРєР° РЅСѓР¶РЅР°, С‚.Рє. РЅРµ РІСЃРµ РІС…РѕРґРЅС‹Рµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё РєСЂР°С‚РЅС‹ 1024. С‡С‚РѕР±С‹ РЅРµ СЃСѓРјРјРёСЂРѕРІР°Р»РѕСЃСЊ Р»РёС€РЅРµРµ
 				data[tid] += data [tid +s];
 		__syncthreads();
 	}
 	
-	if (tid < 32) // т.к. в в варпе 32 нити, то синхронизация не требуется
+	if (tid < 32) // С‚.Рє. РІ РІ РІР°СЂРїРµ 32 РЅРёС‚Рё, С‚Рѕ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ
 	{
 		data[tid] += data[tid + 32];
 		data[tid] += data[tid + 16];
@@ -53,93 +53,93 @@ __global__ void reduce (int nn, int * inData, int * outData)
 		data[tid] += data[tid + 2];
 		data[tid] += data[tid + 1];
 	}
-	if (tid == 0) // сохранить сумму элементов блока
+	if (tid == 0) // СЃРѕС…СЂР°РЅРёС‚СЊ СЃСѓРјРјСѓ СЌР»РµРјРµРЅС‚РѕРІ Р±Р»РѕРєР°
 		outData [blockIdx.x] = data [0];
 }
 
 int reduce (int * data, int n)
 {
 	int numBytes = n * sizeof (int);
-	int NumThreads = BLOCK_SIZE; // количество нитей в блоке
-	int NumBloks = ceil((float) n / NumThreads); // высчитываем количество блоков при заданном n и размере блока с округлением в большую сторону
+	int NumThreads = BLOCK_SIZE; // РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ
+	int NumBloks = ceil((float) n / NumThreads); // РІС‹СЃС‡РёС‚С‹РІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р»РѕРєРѕРІ РїСЂРё Р·Р°РґР°РЅРЅРѕРј n Рё СЂР°Р·РјРµСЂРµ Р±Р»РѕРєР° СЃ РѕРєСЂСѓРіР»РµРЅРёРµРј РІ Р±РѕР»СЊС€СѓСЋ СЃС‚РѕСЂРѕРЅСѓ
 	
 	int sum = 0;
 	
-	//счетчики времени
+	//СЃС‡РµС‚С‡РёРєРё РІСЂРµРјРµРЅРё
 	size_t free = 0;
 	size_t total = 0;
 
-	// Выбрать первый GPU для работы
+	// Р’С‹Р±СЂР°С‚СЊ РїРµСЂРІС‹Р№ GPU РґР»СЏ СЂР°Р±РѕС‚С‹
 	cudaSetDevice(0);
 
-	// Выделить память на CPU
+	// Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РЅР° CPU
 	int * inD = new int [n];
 	int * outD = new int [n];
 
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	int * inDev = NULL;
 	int * outDev = NULL;
 
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	cudaMalloc ((void**)&inDev, numBytes);
 	cudaMalloc ((void**)&outDev, numBytes);
 
-	// копируем данные на GPU
+	// РєРѕРїРёСЂСѓРµРј РґР°РЅРЅС‹Рµ РЅР° GPU
 	cudaMemcpyAsync (inDev, data, numBytes, cudaMemcpyHostToDevice);
 
-	// запуск ядра
-	int NewNumBloks = ceil((float) NumBloks / 2 );  // высчитываем количество блоков при заданном n и размере блока с округлением в большую сторону
+	// Р·Р°РїСѓСЃРє СЏРґСЂР°
+	int NewNumBloks = ceil((float) NumBloks / 2 );  // РІС‹СЃС‡РёС‚С‹РІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р»РѕРєРѕРІ РїСЂРё Р·Р°РґР°РЅРЅРѕРј n Рё СЂР°Р·РјРµСЂРµ Р±Р»РѕРєР° СЃ РѕРєСЂСѓРіР»РµРЅРёРµРј РІ Р±РѕР»СЊС€СѓСЋ СЃС‚РѕСЂРѕРЅСѓ
 	dim3 threads = dim3(NumThreads);
 	dim3 bloks = dim3(NewNumBloks);
 
-	// Засекаем время
+	// Р—Р°СЃРµРєР°РµРј РІСЂРµРјСЏ
 	cudaEvent_t start, stop;
 	float gpuTime = 0.0f;
-	// создаем события начала и окончания выполнения ядра
+	// СЃРѕР·РґР°РµРј СЃРѕР±С‹С‚РёСЏ РЅР°С‡Р°Р»Р° Рё РѕРєРѕРЅС‡Р°РЅРёСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЏРґСЂР°
 	cudaEventCreate (&start);
 	cudaEventCreate (&stop);
-	// Привязываем событие strat к текущему месту
+	// РџСЂРёРІСЏР·С‹РІР°РµРј СЃРѕР±С‹С‚РёРµ strat Рє С‚РµРєСѓС‰РµРјСѓ РјРµСЃС‚Сѓ
 	cudaEventRecord (start, 0);
 
-	// запуск ядра
-	reduce<<<bloks, threads>>> (n, inDev, outDev); // находим сумму
+	// Р·Р°РїСѓСЃРє СЏРґСЂР°
+	reduce<<<bloks, threads>>> (n, inDev, outDev); // РЅР°С…РѕРґРёРј СЃСѓРјРјСѓ
 
-	// привязываем событие stop к данному месту
+	// РїСЂРёРІСЏР·С‹РІР°РµРј СЃРѕР±С‹С‚РёРµ stop Рє РґР°РЅРЅРѕРјСѓ РјРµСЃС‚Сѓ
 	cudaEventRecord (stop, 0);
-	// Дожидаемся реального окончания выполнения ядра, используя возможность синхронизации по событию stop
+	// Р”РѕР¶РёРґР°РµРјСЃСЏ СЂРµР°Р»СЊРЅРѕРіРѕ РѕРєРѕРЅС‡Р°РЅРёСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ СЏРґСЂР°, РёСЃРїРѕР»СЊР·СѓСЏ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё РїРѕ СЃРѕР±С‹С‚РёСЋ stop
 	cudaEventSynchronize (stop);
-	// Запрашиваем время между событиями start и stop
+	// Р—Р°РїСЂР°С€РёРІР°РµРј РІСЂРµРјСЏ РјРµР¶РґСѓ СЃРѕР±С‹С‚РёСЏРјРё start Рё stop
 	cudaEventElapsedTime ( &gpuTime, start, stop);
 	printf("time spent executing by the GPU: %.9f millseconds\n", gpuTime);
-	// Уничтожаем созданные события
+	// РЈРЅРёС‡С‚РѕР¶Р°РµРј СЃРѕР·РґР°РЅРЅС‹Рµ СЃРѕР±С‹С‚РёСЏ
 	cudaEventDestroy (start);
 	cudaEventDestroy (stop);
 
-	// копируем результат обратно в CPU
+	// РєРѕРїРёСЂСѓРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РѕР±СЂР°С‚РЅРѕ РІ CPU
 	cudaMemcpy (outD, outDev, numBytes, cudaMemcpyDeviceToHost);
 
-	// освобождаем память
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
 	cudaFree (inDev);
 	cudaFree (outDev);
 
 	sum = 0;
-	if (NewNumBloks > BLOCK_SIZE) // если блоков много, то запускаем повторное суммирование на GPU
+	if (NewNumBloks > BLOCK_SIZE) // РµСЃР»Рё Р±Р»РѕРєРѕРІ РјРЅРѕРіРѕ, С‚Рѕ Р·Р°РїСѓСЃРєР°РµРј РїРѕРІС‚РѕСЂРЅРѕРµ СЃСѓРјРјРёСЂРѕРІР°РЅРёРµ РЅР° GPU
 		sum = reduce(outD, NewNumBloks);
-	else // если мало, то подсчитываем результат на CPU
+	else // РµСЃР»Рё РјР°Р»Рѕ, С‚Рѕ РїРѕРґСЃС‡РёС‚С‹РІР°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РЅР° CPU
 	{			
 		for (int i = 0; i < NewNumBloks; i++)
 			sum += outD[i];
 		delete [] outD;
 	}
 		
-	// Информация о памяти
+	// РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїР°РјСЏС‚Рё
 	cudaMemGetInfo (&free, &total);
-	printf("Количество свободной памяти: %lld, всего %lld\n", free, total); 
+	printf("РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРІРѕР±РѕРґРЅРѕР№ РїР°РјСЏС‚Рё: %lld, РІСЃРµРіРѕ %lld\n", free, total); 
 
 	cudaFree(outDev);
 	//cudaFree(inDev2);
 	cudaMemGetInfo (&free, &total);
-	printf("Количество свободной памяти: %lld, всего %lld\n", free, total); 
+	printf("РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРІРѕР±РѕРґРЅРѕР№ РїР°РјСЏС‚Рё: %lld, РІСЃРµРіРѕ %lld\n", free, total); 
 
 	return sum;
 }
@@ -155,22 +155,22 @@ void
 Frequency(int n)
 {
 	int numBytes = n * sizeof (int);
-	int NumThreads = BLOCK_SIZE; // количество нитей в блоке
-	int NumBloks = ceil((float) n / NumThreads); // высчитываем количество блоков при заданном n и размере блока с округлением в большую сторону
+	int NumThreads = BLOCK_SIZE; // РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ
+	int NumBloks = ceil((float) n / NumThreads); // РІС‹СЃС‡РёС‚С‹РІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ Р±Р»РѕРєРѕРІ РїСЂРё Р·Р°РґР°РЅРЅРѕРј n Рё СЂР°Р·РјРµСЂРµ Р±Р»РѕРєР° СЃ РѕРєСЂСѓРіР»РµРЅРёРµРј РІ Р±РѕР»СЊС€СѓСЋ СЃС‚РѕСЂРѕРЅСѓ
 
 	int sum;
 	double	f, s_obs, p_value, sqrt2 = 1.41421356237309504880;
 	
-	// Выбрать первый GPU для работы
+	// Р’С‹Р±СЂР°С‚СЊ РїРµСЂРІС‹Р№ GPU РґР»СЏ СЂР°Р±РѕС‚С‹
 	cudaSetDevice(0);
 
-	// Выделить память на CPU
+	// Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РЅР° CPU
 	int * a = new int [n];
 	int * aa = new int [n];
 	int * d = new int [n];
 	int * dd = new int [n];
 
-	// Создаем массивы 
+	// РЎРѕР·РґР°РµРј РјР°СЃСЃРёРІС‹ 
 	printf("Data: \n");
 	for (int i = 0; i < n; i++)
 	{
@@ -178,58 +178,58 @@ Frequency(int n)
 		aa[i] = epsilon[i];
 	}
 	
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	int * aDev = NULL;
 	int * dDev = NULL;
 
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	cudaMalloc ((void**)&aDev, numBytes);
 	cudaMalloc ((void**)&dDev, numBytes);
 	
-	// копируем данные на GPU
+	// РєРѕРїРёСЂСѓРµРј РґР°РЅРЅС‹Рµ РЅР° GPU
 	cudaMemcpyAsync (aDev, a, numBytes, cudaMemcpyHostToDevice);
 
-	// запуск ядра
+	// Р·Р°РїСѓСЃРє СЏРґСЂР°
 	dim3 threads = dim3(NumThreads);
 	dim3 bloks = dim3(NumBloks);
 	
-	// запуск ядра
-	epsilonToX<<<bloks, threads>>> (n, aDev, dDev); // находим x
+	// Р·Р°РїСѓСЃРє СЏРґСЂР°
+	epsilonToX<<<bloks, threads>>> (n, aDev, dDev); // РЅР°С…РѕРґРёРј x
 
-	// освобождаем память
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
 	cudaFree (aDev);
 	cudaMemcpy (d, dDev, numBytes, cudaMemcpyDeviceToHost);
-	// освобождаем память
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
 	cudaFree (dDev);
 
-	// Запускаем таймер
+	// Р—Р°РїСѓСЃРєР°РµРј С‚Р°Р№РјРµСЂ
 	int startGPU = GetTickCount();      
 	sum = reduce (d, n);	
-	//Выводим время выполнения функции на CPU (в миллиекундах)
+	//Р’С‹РІРѕРґРёРј РІСЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё РЅР° CPU (РІ РјРёР»Р»РёРµРєСѓРЅРґР°С…)
     printf ("GPU compute time: %i\n", GetTickCount() - startGPU);
 
-	// вычисляем s(obs)
-	s_obs = fabs(1.0*sum)/sqrt(1.0*n); // умножаем на 1.0, чтобы компилятор понимал, какую функцию использовать (тип вещественный)
+	// РІС‹С‡РёСЃР»СЏРµРј s(obs)
+	s_obs = fabs(1.0*sum)/sqrt(1.0*n); // СѓРјРЅРѕР¶Р°РµРј РЅР° 1.0, С‡С‚РѕР±С‹ РєРѕРјРїРёР»СЏС‚РѕСЂ РїРѕРЅРёРјР°Р», РєР°РєСѓСЋ С„СѓРЅРєС†РёСЋ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ (С‚РёРї РІРµС‰РµСЃС‚РІРµРЅРЅС‹Р№)
 	f = s_obs/sqrt2;
 	p_value = cephes_erfc(1.0*f);
 
-	// освобождаем память
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
 	cudaFree (aDev);
 	cudaFree (dDev);
 
-	//Выводим результат
+	//Р’С‹РІРѕРґРёРј СЂРµР·СѓР»СЊС‚Р°С‚
 	printf("\n Result sumA = %d, NumBloks = %d, s(obs)=%lf, P-value=%lf\n", sum, NumBloks, s_obs, p_value);
 
-	// Запускаем таймер
+	// Р—Р°РїСѓСЃРєР°РµРј С‚Р°Р№РјРµСЂ
 	int startCPU = GetTickCount();      
-	// Те же вычисления на CPU
+	// РўРµ Р¶Рµ РІС‹С‡РёСЃР»РµРЅРёСЏ РЅР° CPU
 	int summ = 0;
 	for (int i = 0; i < n; i++)
 	{
 		aa[i] = 2 * aa[i] - 1;
 		summ += aa[i];
 	}
-	//Выводим время выполнения функции на CPU (в миллиекундах)
+	//Р’С‹РІРѕРґРёРј РІСЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё РЅР° CPU (РІ РјРёР»Р»РёРµРєСѓРЅРґР°С…)
     printf ("CPU compute time: %i\n", GetTickCount() - startCPU);
 
 	printf("Result sumAA = %d\n", summ);
