@@ -1,4 +1,4 @@
-#include "defs.h"
+﻿#include "defs.h"
 #include <stdio.h> // добавила, чтобы FILE определился
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

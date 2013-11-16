@@ -1,4 +1,4 @@
-
+﻿
 #ifndef _GENUTILS_H_
 #define _GENUTILS_H_
 
