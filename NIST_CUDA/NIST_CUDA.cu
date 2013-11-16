@@ -1,4 +1,4 @@
-#include <iostream> 
+﻿#include <iostream> 
 #include <stdio.h> 
 #include <cuda_runtime.h> 
 
@@ -7,7 +7,7 @@
 #include "include\decls.h"
 #include "include\cephes.h"  
 #include "include\utilities.h"
- 
+
 #pragma comment(lib, "cudart") 
 
 void	partitionResultFile(int numOfFiles, int numOfSequences, int option, int testNameID);
@@ -36,7 +36,7 @@ int DeviceInfo(void)
 {
 	int count;
 	cudaDeviceProp prop;
-	
+
 	//Информация об устройстве
 	cudaGetDeviceCount( &count );
 	for (int i = 0; i < count; i++)
