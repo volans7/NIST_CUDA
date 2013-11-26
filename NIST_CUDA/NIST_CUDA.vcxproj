@@ -86,8 +86,14 @@
   <ItemGroup>
     <CudaCompile Include="blockFrequency.cu" />
     <CudaCompile Include="cephes.cu" />
+    <CudaCompile Include="cusum.cu" />
+    <CudaCompile Include="discreteFourierTransform.cu" />
     <CudaCompile Include="frequency.cu" />
+    <CudaCompile Include="matrix.cu" />
     <CudaCompile Include="NIST_CUDA.cu" />
+    <CudaCompile Include="nonOverlappingTemplateMatchings.cu" />
+    <CudaCompile Include="rank.cu" />
+    <CudaCompile Include="runs.cu" />
     <CudaCompile Include="utilities.cu" />
   </ItemGroup>
   <ItemGroup>

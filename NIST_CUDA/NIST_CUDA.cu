@@ -93,7 +93,7 @@ int main(void)
 	DeviceInfo();
 
 	// Определяем параметры теста (структура определена в defs.h)
-	tp.n = 100; //60000000 int shared memory max. 
+	tp.n = 16384; // 1) 60000000 int shared memory max. 2) 10240000
 	tp.blockFrequencyBlockLength = 128;
 	tp.nonOverlappingTemplateBlockLength = 9;
 	tp.overlappingTemplateBlockLength = 9;

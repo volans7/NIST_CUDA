@@ -408,7 +408,7 @@ nist_test_suite()
 {
 	if ( (testVector[0] == 1) || (testVector[TEST_FREQUENCY] == 1) ) {
 		printf("Выполняем тест: 1) Частотный тест\n");
-		Frequency(tp.n);
+		//Frequency(tp.n);
 	}
 	if ( (testVector[0] == 1) || (testVector[TEST_BLOCK_FREQUENCY] == 1) ) 
 		printf("Выполняем тест: 2) Частотный тест в подпоследовательностях\n");
@@ -420,7 +420,7 @@ nist_test_suite()
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_RUNS] == 1) )
 		printf("Выполняем тест: 4) Проверка на равномертность\n");
-		//Runs(tp.n); 
+		Runs(tp.n); 
 	
 	if ( (testVector[0] == 1) || (testVector[TEST_LONGEST_RUN] == 1) )
 		printf("Выполняем тест: 5) Проверка на равномертность в подпоследовательности\n");
