@@ -1,4 +1,4 @@
-#include <stdio.h>
+п»ї#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
@@ -8,22 +8,22 @@
 #include <cuda_runtime.h> 
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-#include <device_launch_parameters.h> // для threadIdx
-#include <device_functions.h> // для __syncthreads()
+#include <device_launch_parameters.h> // РґР»СЏ threadIdx
+#include <device_functions.h> // РґР»СЏ __syncthreads()
 
 #include <ctime>
 #include <time.h>
 #include <Windows.h>
 
-#pragma comment(lib, "cudart") // динамическая бибилиотека для CUDA runtime API (высокоуровневый)
+#pragma comment(lib, "cudart") // РґРёРЅР°РјРёС‡РµСЃРєР°СЏ Р±РёР±РёР»РёРѕС‚РµРєР° РґР»СЏ CUDA runtime API (РІС‹СЃРѕРєРѕСѓСЂРѕРІРЅРµРІС‹Р№)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 		    C U M U L A T I V E  S U M S  T E S T
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#define BLOCK_SIZE 8 // это максимально возможное число нитей в блоке. 128, 256, 512, 1024. 4
-//#define N (256*256) // размер массива
-#define N (16) // размер массива. N = n
-#define LOG_NUM_BANKS 4 // логарифм числа банков 16 по основанию 2
-#define CONFLICT_FREE_OFFS(i) ((i) >> LOG_NUM_BANKS) // макрос. сдвиг вправо на LOG_NUM_BANKS разрядов. 16 = 10000 -> 1
+#define BLOCK_SIZE 8 // СЌС‚Рѕ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РІРѕР·РјРѕР¶РЅРѕРµ С‡РёСЃР»Рѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ. 128, 256, 512, 1024. 4
+//#define N (256*256) // СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°
+#define N (16) // СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°. N = n
+#define LOG_NUM_BANKS 4 // Р»РѕРіР°СЂРёС„Рј С‡РёСЃР»Р° Р±Р°РЅРєРѕРІ 16 РїРѕ РѕСЃРЅРѕРІР°РЅРёСЋ 2
+#define CONFLICT_FREE_OFFS(i) ((i) >> LOG_NUM_BANKS) // РјР°РєСЂРѕСЃ. СЃРґРІРёРі РІРїСЂР°РІРѕ РЅР° LOG_NUM_BANKS СЂР°Р·СЂСЏРґРѕРІ. 16 = 10000 -> 1
 
 __global__ void scan (int * inData, int * outData, int * sums, int n)
 {
@@ -44,7 +44,7 @@ __global__ void scan (int * inData, int * outData, int * sums, int n)
 		__syncthreads();
 		if(tid < d)
 		{
-			//подсчитываем индексы для сложения элементов (как в reduce)
+			//РїРѕРґСЃС‡РёС‚С‹РІР°РµРј РёРЅРґРµРєСЃС‹ РґР»СЏ СЃР»РѕР¶РµРЅРёСЏ СЌР»РµРјРµРЅС‚РѕРІ (РєР°Рє РІ reduce)
 			int ai = offset * (2 * tid + 1) - 1; 
 			int bi = offset * (2 * tid + 2) - 1;
 
@@ -55,12 +55,12 @@ __global__ void scan (int * inData, int * outData, int * sums, int n)
 		offset <<= 1;
 	}
 
-	// сохраняем результат в массив сумм
+	// СЃРѕС…СЂР°РЅСЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІ РјР°СЃСЃРёРІ СЃСѓРјРј
 	if (tid == 0)
 	{
 		int i = n - 1 + CONFLICT_FREE_OFFS(n-1);
-		sums[blockIdx.x] = temp[i]; // сохраняем результат из крайнего правого элемента массива
-		temp[i] = 0; // зануляем крайний правый элемент 
+		sums[blockIdx.x] = temp[i]; // СЃРѕС…СЂР°РЅСЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РёР· РєСЂР°Р№РЅРµРіРѕ РїСЂР°РІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РјР°СЃСЃРёРІР°
+		temp[i] = 0; // Р·Р°РЅСѓР»СЏРµРј РєСЂР°Р№РЅРёР№ РїСЂР°РІС‹Р№ СЌР»РµРјРµРЅС‚ 
 	}
 	
 	for (int d = 1; d < n; d <<= 1)
@@ -75,9 +75,9 @@ __global__ void scan (int * inData, int * outData, int * sums, int n)
 			int t;
 			ai += CONFLICT_FREE_OFFS(ai);
 			bi += CONFLICT_FREE_OFFS(bi);
-			t = temp[ai]; // сохраняем элемент 
-			temp[ai] = temp[bi]; // на его место записываем другой
-			temp[bi] += t; // на место другого записываем сумму другого с элементом из хранилища
+			t = temp[ai]; // СЃРѕС…СЂР°РЅСЏРµРј СЌР»РµРјРµРЅС‚ 
+			temp[ai] = temp[bi]; // РЅР° РµРіРѕ РјРµСЃС‚Рѕ Р·Р°РїРёСЃС‹РІР°РµРј РґСЂСѓРіРѕР№
+			temp[bi] += t; // РЅР° РјРµСЃС‚Рѕ РґСЂСѓРіРѕРіРѕ Р·Р°РїРёСЃС‹РІР°РµРј СЃСѓРјРјСѓ РґСЂСѓРіРѕРіРѕ СЃ СЌР»РµРјРµРЅС‚РѕРј РёР· С…СЂР°РЅРёР»РёС‰Р°
 		}
 	}
 	
@@ -87,46 +87,46 @@ __global__ void scan (int * inData, int * outData, int * sums, int n)
 	outData[bi + 2*BLOCK_SIZE*blockIdx.x] = temp [bi + offsB];	
 }
 
-// Ядро, осуществляющее коррекцию массива
+// РЇРґСЂРѕ, РѕСЃСѓС‰РµСЃС‚РІР»СЏСЋС‰РµРµ РєРѕСЂСЂРµРєС†РёСЋ РјР°СЃСЃРёРІР°
 __global__ void scanDistribute(int * data, int * sums)
 {
 	data[threadIdx.x + blockIdx.x*2*BLOCK_SIZE] += sums [blockIdx.x];
 }
 
-// Reduction (min/max), только для blockDim.x = степени 2:
+// Reduction (min/max), С‚РѕР»СЊРєРѕ РґР»СЏ blockDim.x = СЃС‚РµРїРµРЅРё 2:
 __global__ void funcMin (int nn, int * inData, int * outData)
 {
 	int  thread2;
 	double temp;
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	__shared__ double min[BLOCK_SIZE];
-	int nTotalThreads = blockDim.x;	// число нитей в блоке
+	int nTotalThreads = blockDim.x;	// С‡РёСЃР»Рѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ
 	int halfPoint = (nTotalThreads >> 1);
 
-	// Получаем входные данные
+	// РџРѕР»СѓС‡Р°РµРј РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ
 	min[threadIdx.x] = inData[i];
 	__syncthreads();
 
 	while(nTotalThreads > 1)
 	{		
-		halfPoint = (nTotalThreads >> 1);	// делим на 2	
+		halfPoint = (nTotalThreads >> 1);	// РґРµР»РёРј РЅР° 2	
 
-		if (threadIdx.x < halfPoint) // только первая половина нитей будет активна
+		if (threadIdx.x < halfPoint) // С‚РѕР»СЊРєРѕ РїРµСЂРІР°СЏ РїРѕР»РѕРІРёРЅР° РЅРёС‚РµР№ Р±СѓРґРµС‚ Р°РєС‚РёРІРЅР°
 		{
 			thread2 = threadIdx.x + halfPoint;
  
-			// получаем значение из разделяемой памяти для другой нити
+			// РїРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ РёР· СЂР°Р·РґРµР»СЏРµРјРѕР№ РїР°РјСЏС‚Рё РґР»СЏ РґСЂСѓРіРѕР№ РЅРёС‚Рё
 			temp = min[thread2];
 			if (temp < min[threadIdx.x]) 
 				min[threadIdx.x] = temp; 		 
 		}
 		__syncthreads();
  
-		// уменьшаем размер бинарного дерева на 2:
+		// СѓРјРµРЅСЊС€Р°РµРј СЂР°Р·РјРµСЂ Р±РёРЅР°СЂРЅРѕРіРѕ РґРµСЂРµРІР° РЅР° 2:
 		nTotalThreads = halfPoint;
 	}
 
-	if (threadIdx.x == 0) // сохранить результат
+	if (threadIdx.x == 0) // СЃРѕС…СЂР°РЅРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚
 		outData [blockIdx.x] = min[threadIdx.x];
 }
 
@@ -136,42 +136,42 @@ __global__ void funcMax (int nn, int * inData, int * outData)
 	double temp;
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	__shared__ double max[BLOCK_SIZE];
-	int nTotalThreads = blockDim.x;	// число нитей в блоке
+	int nTotalThreads = blockDim.x;	// С‡РёСЃР»Рѕ РЅРёС‚РµР№ РІ Р±Р»РѕРєРµ
 	int halfPoint = (nTotalThreads >> 1);
 
-	// Получаем входные данные
+	// РџРѕР»СѓС‡Р°РµРј РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ
 	max[threadIdx.x] = inData[i];
 	__syncthreads();
 
 	while(nTotalThreads > 1)
 	{		
-		halfPoint = (nTotalThreads >> 1);	// делим на 2	
+		halfPoint = (nTotalThreads >> 1);	// РґРµР»РёРј РЅР° 2	
 
-		if (threadIdx.x < halfPoint) // только первая половина нитей будет активна
+		if (threadIdx.x < halfPoint) // С‚РѕР»СЊРєРѕ РїРµСЂРІР°СЏ РїРѕР»РѕРІРёРЅР° РЅРёС‚РµР№ Р±СѓРґРµС‚ Р°РєС‚РёРІРЅР°
 		{
 			thread2 = threadIdx.x + halfPoint;
  
-			// получаем значение из разделяемой памяти для другой нити
+			// РїРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ РёР· СЂР°Р·РґРµР»СЏРµРјРѕР№ РїР°РјСЏС‚Рё РґР»СЏ РґСЂСѓРіРѕР№ РЅРёС‚Рё
 			temp = max[thread2];
 			if (temp > max[threadIdx.x]) 
 				max[threadIdx.x] = temp; 		 
 		}
 		__syncthreads();
  
-		// уменьшаем размер бинарного дерева на 2:
+		// СѓРјРµРЅСЊС€Р°РµРј СЂР°Р·РјРµСЂ Р±РёРЅР°СЂРЅРѕРіРѕ РґРµСЂРµРІР° РЅР° 2:
 		nTotalThreads = halfPoint;
 	}
 
-	if (threadIdx.x == 0) // сохранить результат
+	if (threadIdx.x == 0) // СЃРѕС…СЂР°РЅРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚
 		outData [blockIdx.x] = max[threadIdx.x];
 }
 
-//Осуществить scan для заданного массива
+//РћСЃСѓС‰РµСЃС‚РІРёС‚СЊ scan РґР»СЏ Р·Р°РґР°РЅРЅРѕРіРѕ РјР°СЃСЃРёРІР°
 void scan (int * inData, int * outData, int n)
 {
 	int numBlocks = n / (2*BLOCK_SIZE);
-	int * sums = NULL; // суммы элементов для каждого блока
-	int * sums2 = NULL; // результат scan'а этих сумм
+	int * sums = NULL; // СЃСѓРјРјС‹ СЌР»РµРјРµРЅС‚РѕРІ РґР»СЏ РєР°Р¶РґРѕРіРѕ Р±Р»РѕРєР°
+	int * sums2 = NULL; // СЂРµР·СѓР»СЊС‚Р°С‚ scan'Р° СЌС‚РёС… СЃСѓРјРј
 
 	if (numBlocks < 1)
 		numBlocks = 1;
@@ -179,19 +179,19 @@ void scan (int * inData, int * outData, int n)
 	cudaMalloc ((void**)&sums, numBlocks * sizeof (int));
 	cudaMalloc ((void**)&sums2, numBlocks * sizeof (int));
 
-	// осуществляем поблочный scan. одна нить на два элемента
+	// РѕСЃСѓС‰РµСЃС‚РІР»СЏРµРј РїРѕР±Р»РѕС‡РЅС‹Р№ scan. РѕРґРЅР° РЅРёС‚СЊ РЅР° РґРІР° СЌР»РµРјРµРЅС‚Р°
 	dim3 threads (BLOCK_SIZE, 1, 1);
 	dim3 blocks (numBlocks, 1, 1);
 
 	scan<<<blocks, threads>>>(inData, outData, sums, 2*BLOCK_SIZE);
 	
-	// выполняем scan для сумм
+	// РІС‹РїРѕР»РЅСЏРµРј scan РґР»СЏ СЃСѓРјРј
 	if (n >= 2*BLOCK_SIZE)
 		scan(sums, sums2, numBlocks);
 	else 
 		cudaMemcpy(sums2, sums, numBlocks*sizeof(int), cudaMemcpyDeviceToDevice);
 	
-	// Корректируем результаты
+	// РљРѕСЂСЂРµРєС‚РёСЂСѓРµРј СЂРµР·СѓР»СЊС‚Р°С‚С‹
 	threads = dim3 (2*BLOCK_SIZE, 1, 1);
 	blocks = dim3 (numBlocks - 1, 1, 1);
 
@@ -204,11 +204,11 @@ void scan (int * inData, int * outData, int n)
 int funcMin(int n, int * b)
 {
 	int i;
-	// Выделить память на CPU
+	// Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РЅР° CPU
 	int numBlocks = n / BLOCK_SIZE;
 	int * minD = new int [numBlocks];
 
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	int * minDev = NULL;
 	int * inDev = NULL;
 	cudaMalloc ((void**)&minDev, numBlocks*sizeof(int));
@@ -220,10 +220,10 @@ int funcMin(int n, int * b)
 	dim3 blocks (numBlocks, 1, 1);
 	funcMin<<<blocks, threads>>>(n, inDev, minDev);
 
-	// копируем результат обратно в CPU
+	// РєРѕРїРёСЂСѓРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РѕР±СЂР°С‚РЅРѕ РІ CPU
 	cudaMemcpy (minD, minDev, numBlocks*sizeof(int), cudaMemcpyDeviceToHost);
 	/*
-	printf("Минимумы и максимумы в блоках:\n");
+	printf("РњРёРЅРёРјСѓРјС‹ Рё РјР°РєСЃРёРјСѓРјС‹ РІ Р±Р»РѕРєР°С…:\n");
 	for (i = 0; i < numBlocks; i++)
 		printf("%d) min=%d ", i, minD[i]);
 	*/
@@ -251,11 +251,11 @@ int funcMin(int n, int * b)
 int funcMax(int n, int * b)
 {
 	int i;
-	// Выделить память на CPU
+	// Р’С‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ РЅР° CPU
 	int numBlocks = n / BLOCK_SIZE;
 	int * maxD = new int [numBlocks];
 
-	// выделяем память на GPU
+	// РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РЅР° GPU
 	int * inDev = NULL;
 	int * maxDev = NULL;
 	cudaMalloc ((void**)&inDev, n*sizeof(int));
@@ -267,10 +267,10 @@ int funcMax(int n, int * b)
 	dim3 blocks (numBlocks, 1, 1);
 	funcMax<<<blocks, threads>>>(n, inDev, maxDev);
 
-	// копируем результат обратно в CPU
+	// РєРѕРїРёСЂСѓРµРј СЂРµР·СѓР»СЊС‚Р°С‚ РѕР±СЂР°С‚РЅРѕ РІ CPU
 	cudaMemcpy (maxD, maxDev, numBlocks*sizeof(int), cudaMemcpyDeviceToHost);
 	/*
-	printf("Минимумы и максимумы в блоках:\n");
+	printf("РњРёРЅРёРјСѓРјС‹ Рё РјР°РєСЃРёРјСѓРјС‹ РІ Р±Р»РѕРєР°С…:\n");
 	for (i = 0; i < numBlocks; i++)
 		printf("%d) max=%d ", i, maxD[i]);
 	*/
@@ -305,7 +305,7 @@ Cusum(int n)
 	int * a = new int [n];
 	int * b = new int [n+1];
 
-	// Создаем массивы 
+	// РЎРѕР·РґР°РµРј РјР°СЃСЃРёРІС‹ 
 	//printf("Data: \n");
 	int tempSum = 0;
 	for (int ii = 0; ii < n; ii++)
@@ -315,7 +315,7 @@ Cusum(int n)
 		//printf("a[%d] = %d\n", ii, a[ii]);
 		//fprintf(results[TEST_CUSUM], "%d) %d\n", ii, tempSum);
 	}
-	printf("Настоящая кумулятивная сумма: %d\n", tempSum);
+	printf("РќР°СЃС‚РѕСЏС‰Р°СЏ РєСѓРјСѓР»СЏС‚РёРІРЅР°СЏ СЃСѓРјРјР°: %d\n", tempSum);
 
 	int * adev[2] = {NULL, NULL};
 
@@ -350,7 +350,7 @@ Cusum(int n)
 	//	printf("%d) %d\n", i, b[i]);
 		//fprintf(stats[TEST_CUSUM], "%d) %d\n", i, b[i]);
 
-	printf("Кумулятивная сумма: %d\n", b[n-1]);
+	printf("РљСѓРјСѓР»СЏС‚РёРІРЅР°СЏ СЃСѓРјРјР°: %d\n", b[n-1]);
 	printf("\n");
 
 	printf("time spent executing by the GPU: %.2f milliseconds\n", gpuTime);
@@ -358,7 +358,7 @@ Cusum(int n)
 	cudaEventDestroy(start);
 	cudaEventDestroy(stop);
 
-	// Вычисляем z
+	// Р’С‹С‡РёСЃР»СЏРµРј z
 	inf = funcMin(n, b);
 	sup = funcMax(n, b);
 
@@ -374,8 +374,8 @@ Cusum(int n)
 		if (b[i] > tmpMax)
 			tmpMax = b[i];
 	}
-	printf("Настоящий минумум = %d \n", tmpMin);
-	printf("Настоящий максимум = %d \n", tmpMax);
+	printf("РќР°СЃС‚РѕСЏС‰РёР№ РјРёРЅСѓРјСѓРј = %d \n", tmpMin);
+	printf("РќР°СЃС‚РѕСЏС‰РёР№ РјР°РєСЃРёРјСѓРј = %d \n", tmpMax);
 
 	cudaFree(adev[0]);
 	cudaFree(adev[1]);
@@ -425,10 +425,10 @@ CumulativeSums(int n)
 		//printf("%d) S=%d z=%d sup=%d int=%d zrev=%d ", k, S, z, sup, inf, zrev);
 	}
 	printf("S=%d z=%d sup=%d int=%d zrev=%d\n", S, z, sup, inf, zrev);
-	// Проход вперед
+	// РџСЂРѕС…РѕРґ РІРїРµСЂРµРґ
 	sum1 = 0.0;
 	int tempk1 = (-n / z + 1) / 4, tempk2 = (n / z - 1) / 4;
-	printf("Границы результирующего цикла: [ %d, %d ]\n", tempk1, tempk2);
+	printf("Р“СЂР°РЅРёС†С‹ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРіРѕ С†РёРєР»Р°: [ %d, %d ]\n", tempk1, tempk2);
 
 	for (k = (-n / z + 1) / 4; k <= (n / z - 1) / 4; k++) 
 	{		
@@ -439,7 +439,7 @@ CumulativeSums(int n)
 	}
 	sum2 = 0.0;
 	tempk1 = (-n / z - 3) / 4; tempk2 =(n / z - 1) / 4;
-	printf("Границы результирующего цикла: [ %d, %d ]\n", tempk1, tempk2);
+	printf("Р“СЂР°РЅРёС†С‹ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРіРѕ С†РёРєР»Р°: [ %d, %d ]\n", tempk1, tempk2);
 	for (k = (-n / z - 3) / 4; k <=(n / z - 1) / 4; k++ ) {
 		sum2 += cephes_normal(((4 * k + 3) * z) / sqrt((double)n)); 
 		//printf("k=%d sum2=%lf ", k, sum2);
@@ -462,7 +462,7 @@ CumulativeSums(int n)
 	fprintf(stats[TEST_CUSUM], "%s\t\tp_value = %f\n\n", p_value < ALPHA ? "FAILURE" : "SUCCESS", p_value);
 	fprintf(results[TEST_CUSUM], "%f\n", p_value);
 		
-	// Проход назад
+	// РџСЂРѕС…РѕРґ РЅР°Р·Р°Рґ
 	sum1 = 0.0;
 	for ( k=(-n/zrev+1)/4; k<=(n/zrev-1)/4; k++ ) {
 		sum1 += cephes_normal(((4*k+1)*zrev)/sqrt((double)n)); 
